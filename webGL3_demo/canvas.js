@@ -198,7 +198,7 @@ function doGLInit()
     
     gl = canvas.getContext("webgl2");
     if(gl != null) {
-        console.log("WebGL 3 context has been established!");
+        console.log("WebGL 2 context has been established!");
         console.log(`canvas width: ${canvas.width}, canvas height: ${canvas.height}`);
     }
     
