@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8" />
+    <title>WebGL3 Demo</title>
+    <script type="text/javascript" src="canvas.js"></script>
+    
+    <!-- 防止加载favor.ico -->
+    <link rel="icon" href="data:image/ico;base64,aWNv" />
+</head>
+
+<body onload="doGLInit()">
+    <h1>Hello, WebGL3</h1>
+    <button onclick="drawMyGLCanvas()">Draw Content</button>
+    <button onclick="stopDraw()">Stop draw</button>
+    <img id="texture" src = "planesTexture.png" width=1 height=1/>
+    <canvas id="canvas" width="320" height="320"/>
+    
+    <script id="rect_vs" type="x-shader/x-vertex">
+        #version 300 es
+        
+        in vec4 position;
+        in vec4 colors;
+        out lowp vec4 colorVarying;
+        uniform mediump float rotDegree;
+        
+        void main(void)
+        {
+            float theta = radians(rotDegree);
+            mat4 rotateMatrix = mat4(cos(theta), sin(theta), 0.0, 0.0,
+                                     -sin(theta), cos(theta), 0.0, 0.0,
+                                     0.0, 0.0, 1.0, 0.0,
+                                     0.0, 0.0, 0.0, 1.0);
+                                     
+            mat4 translateMatrix = mat4(1.0, 0.0, 0.0, -0.48,
+                                        0.0, 1.0, 0.0, 0.0,
+                                        0.0, 0.0, 1.0, -2.0,
+                                        0.0, 0.0, 0.0, 1.0);
+            
+            mat4 projectionMatrix = mat4(1.0, 0.0, 0.0, 0.0,
+                                         0.0, 1.0, 0.0, 0.0,
+                                         0.0, 0.0, -1.0, -2.0,
+                                         0.0, 0.0, 0.0, 1.0);
+            
+            colorVarying = colors;
+            gl_Position = position * (rotateMatrix * (translateMatrix * projectionMatrix));
+        }
+    </script>
+    
+    <script id="rect_fs" type="x-shader/x-fragment">
+        #version 300 es
+        
+        in lowp vec4 colorVarying;
+        out lowp vec4 outFragColor;
+        
+        void main(void)
+        {
+            outFragColor = colorVarying;
+        }
+        
+    </script>
+    
+    <script id="white_plane_vs" type="x-shader/x-vertex">
+        #version 300 es
+        
+        in vec4 position;
+        in vec2 textureCoordsInput;
+        out mediump vec2 textureCoords;
+        uniform mediump float rotDegree;
+        
+        void main(void)
+        {
+            float theta = radians(rotDegree);
+            mat4 rotateMatrix = mat4(cos(theta), 0.0, sin(theta), 0.0,
+                                     0.0, 1.0, 0.0, 0.0,
+                                     -sin(theta), 0.0, cos(theta), 0.0,
+                                     0.0, 0.0, 0.0, 1.0);
+            
+            mat4 translateMatrix = mat4(1.0, 0.0, 0.0, 0.5,
+                                        0.0, 1.0, 0.0, 0.5,
+                                        0.0, 0.0, 1.0, -2.0,
+                                        0.0, 0.0, 0.0, 1.0);
+                                        
+            mat4 projectionMatrix = mat4(1.0, 0.0, 0.0, 0.0,
+                                         0.0, 1.0, 0.0, 0.0,
+                                         0.0, 0.0, -1.0, -2.0,
+                                         0.0, 0.0, 0.0, 1.0);
+            
+            textureCoords = textureCoordsInput;
+            
+            gl_Position = position * (rotateMatrix * (translateMatrix * projectionMatrix));
+        }
+    </script>
+    
+    <script id="white_plane_fs" type="x-shader/x-fragment">
+        #version 300 es
+        
+        in mediump vec2 textureCoords;
+        uniform sampler2D texSampler;
+        out lowp vec4 outFragColor;
+        
+        void main(void)
+        {
+            lowp vec4 color = texture(texSampler, textureCoords.st);
+            outFragColor = color;
+        }
+    </script>
+    
+    <script id="gray_plane_vs" type="x-shader/x-vertex">
+        #version 300 es
+        
+        in vec4 position;
+        in vec2 textureCoordsInput;
+        out mediump vec2 textureCoords;
+        uniform mediump float rotDegree;
+        
+        void main(void)
+        {
+            float theta = radians(rotDegree);
+            mat4 rotateMatrix = mat4(1.0, 0.0, 0.0, 0.0,
+                                     0.0, cos(theta), -sin(theta), 0.0,
+                                     0.0, sin(theta), cos(theta), 0.0,
+                                     0.0, 0.0, 0.0, 1.0);
+            
+            mat4 translateMatrix = mat4(1.0, 0.0, 0.0, 0.5,
+                                        0.0, 1.0, 0.0, -0.5,
+                                        0.0, 0.0, 1.0, 0.0,
+                                        0.0, 0.0, 0.0, 1.0);
+            
+            textureCoords = textureCoordsInput;
+            gl_Position = position * rotateMatrix * translateMatrix;
+        }
+    </script>
+    
+    <script id="gray_plane_fs" type="x-shader/x-fragment">
+        #version 300 es
+        
+        in mediump vec2 textureCoords;
+        uniform sampler2D texSampler;
+        out lowp vec4 outFragColor;
+        
+        void main(void)
+        {
+            lowp vec4 color = texture(texSampler, textureCoords.st);
+            outFragColor = color;
+        }
+    </script>
+    
+</body>
+</html>
+
