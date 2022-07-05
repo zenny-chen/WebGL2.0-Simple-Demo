@@ -1,4 +1,4 @@
-# WebGL2.0-Simple-Demo
+# WebGL 2.0 Simple Demo
 WebGL 2.0 Simple Demo
 
 <br />
